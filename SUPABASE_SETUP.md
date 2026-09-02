@@ -8,6 +8,41 @@ Supabase setup for `orders` table
    - total: numeric
    - created_at: timestamptz default: now()
 
+   4) Profiles table (store user metadata)
+
+   Run this SQL to create a `profiles` table and RLS policies:
+
+   ```sql
+   create table if not exists public.profiles (
+      user_id uuid primary key,
+      full_name text,
+      email text,
+      dob date,
+      created_at timestamptz default now()
+   );
+
+   alter table public.profiles enable row level security;
+
+   drop policy if exists "Insert own profile" on public.profiles;
+   create policy "Insert own profile"
+      on public.profiles
+      for insert
+      with check ( user_id = auth.uid()::uuid );
+
+   drop policy if exists "Select own profile" on public.profiles;
+   create policy "Select own profile"
+      on public.profiles
+      for select
+      using ( user_id = auth.uid()::uuid );
+
+   drop policy if exists "Update own profile" on public.profiles;
+   create policy "Update own profile"
+      on public.profiles
+      for update
+      using ( user_id = auth.uid()::uuid )
+      with check ( user_id = auth.uid()::uuid );
+   ```
+
 2) Policies (Row Level Security):
    - Enable RLS on `orders` table.
    - Create policy to allow authenticated users to INSERT their own orders:

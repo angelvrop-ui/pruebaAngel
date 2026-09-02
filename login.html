@@ -13,6 +13,9 @@
       <p class="muted">Inicia sesión para acceder a la tienda</p>
       <input id="email" class="input" type="email" placeholder="Correo electrónico">
       <input id="password" class="input" type="password" placeholder="Contraseña">
+      <input id="fullName" class="input" type="text" placeholder="Nombre completo (para registro)">
+      <label class="muted">Fecha de nacimiento</label>
+      <input id="dob" class="input" type="date">
       <div style="display:flex;gap:8px">
         <button id="signin" class="btn">Ingresar</button>
         <button id="signup" class="btn" style="background:#2b2b2b;color:#fff">Registrarse</button>
@@ -44,8 +47,26 @@
     document.getElementById('signup').addEventListener('click', async () => {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const fullName = document.getElementById('fullName').value;
+      const dob = document.getElementById('dob').value;
+      if (!email || !password) { alert('Email y contraseña son requeridos.'); return; }
+      if (!fullName) { alert('Introduce tu nombre completo.'); return; }
+      if (!dob) { alert('Introduce tu fecha de nacimiento.'); return; }
+
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) { alert('Registro error: ' + error.message); return; }
+
+      // If user is created, save profile in 'profiles' table
+      try {
+        const userId = data.user?.id || null;
+        if (userId) {
+          const { error: errProfile } = await supabase.from('profiles').insert([{ user_id: userId, full_name: fullName, email, dob }]);
+          if (errProfile) console.warn('Profile insert warning', errProfile.message);
+        }
+      } catch (e) {
+        console.error('Profile insert exception', e);
+      }
+
       alert('Registro iniciado. Revisa tu email para confirmar si aplica.');
     });
 
