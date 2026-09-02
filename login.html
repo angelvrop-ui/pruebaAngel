@@ -83,6 +83,28 @@
         if (!error && data?.user) window.location.href = 'shop.html';
       } catch (e) { /* ignore */ }
     })();
+
+    // Diagnostic init: try to initialize early and show helpful debug info
+    (async () => {
+      const initResult = await window.Auth.init();
+      if (!initResult) {
+        const present = {
+          SUPABASE_URL: window.SUPABASE_URL || null,
+          SUPABASE_KEY: window.SUPABASE_KEY ? 'present' : null,
+          window_supabase: !!window.supabase,
+          window_supabase_createClient: !!(window.supabase && window.supabase.createClient)
+        };
+        console.warn('Auth.init failed. Diagnostic:', present);
+        showMessage('Supabase client not initialized — comprueba consola para detalles.', true);
+        // expose a small block with diagnostics in the UI
+        const diag = document.createElement('pre');
+        diag.style.color = '#faa';
+        diag.style.marginTop = '8px';
+        diag.textContent = JSON.stringify(present, null, 2);
+        document.querySelector('.login-card').appendChild(diag);
+        setButtonsDisabled(true);
+      }
+    })();
   </script>
 </body>
 </html>
