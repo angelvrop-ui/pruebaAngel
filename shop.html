@@ -29,7 +29,13 @@
 
       <main>
         <div class="panel">
-          <h2>Productos</h2>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Productos</h2>
+            <div class="search">
+              <span class="muted">🔍</span>
+              <input id="search" placeholder="Buscar productos...">
+            </div>
+          </div>
           <div id="products" class="grid"></div>
         </div>
       </main>
@@ -78,12 +84,14 @@
     const cartItemsEl = document.getElementById('cartItems');
     const cartTotalEl = document.getElementById('cartTotal');
     const checkoutBtn = document.getElementById('checkoutBtn');
+    const searchEl = document.getElementById('search');
 
     const cart = [];
 
-    function renderProducts(){
+    function renderProducts(filter=''){
       productsEl.innerHTML = '';
-      PRODUCTS.forEach(p => {
+      const list = PRODUCTS.filter(p => (p.name + ' ' + p.desc).toLowerCase().includes(filter.toLowerCase()));
+      list.forEach(p => {
         const c = document.createElement('div'); c.className='product-card';
         c.innerHTML = `
           <div class="art"></div>
@@ -117,6 +125,7 @@
     document.getElementById('logoutBtn').addEventListener('click', async ()=>{ await supabase.auth.signOut(); window.location.href='login.html'; });
 
     renderProducts();
+    searchEl.addEventListener('input', (e)=> renderProducts(e.target.value));
   </script>
 </body>
 </html>
