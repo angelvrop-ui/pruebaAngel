@@ -117,9 +117,33 @@
     }
 
     checkoutBtn.addEventListener('click', async ()=>{
-      const { data } = await supabase.auth.getUser(); if(!data?.user){ alert('Inicia sesión para comprar'); window.location.href='login.html'; return; }
+      const { data } = await supabase.auth.getUser();
+      const user = data?.user || null;
+      if(!user){ alert('Inicia sesión para comprar'); window.location.href='login.html'; return; }
       if(cart.length===0){ alert('Carrito vacío'); return; }
-      alert('Compra simulada. Gracias, ' + data.user.email);
+
+      // Attempt to save order to Supabase 'orders' table
+      const order = {
+        user_id: user.id,
+        user_email: user.email,
+        items: cart.map(i=>({id:i.id, name:i.name, qty:i.qty, price:i.price})),
+        total: cart.reduce((s,i)=>s + i.price*i.qty, 0),
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        const { data:inserted, error } = await supabase.from('orders').insert(order).select();
+        if (error) {
+          console.error('Orders insert error', error);
+          alert('No se pudo guardar la orden en la base de datos: ' + error.message + '. Se ha simulado el pedido.');
+        } else {
+          alert('Pedido guardado. Gracias, ' + user.email);
+        }
+      } catch (err) {
+        console.error('Exception saving order', err);
+        alert('Error al guardar la orden. Pedido simulado.');
+      }
+
       cart.length=0; renderCart();
     });
 
