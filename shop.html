@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tienda - Vapeify</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="root">
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">Vapeify</div>
+      <div>
+        <span id="userEmail" class="muted"></span>
+        <button id="logoutBtn" class="btn" style="background:#2b2b2b;color:#fff;margin-left:8px">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h3 class="muted">Categorías</h3>
+        <ul style="padding-left:0;list-style:none;color:var(--muted)">
+          <li>Destacados</li>
+          <li>Desechables</li>
+          <li>Recargables</li>
+        </ul>
+      </aside>
+
+      <main>
+        <div class="panel">
+          <h2>Productos</h2>
+          <div id="products" class="grid"></div>
+        </div>
+      </main>
+
+      <aside id="cart" class="panel">
+        <h3>Carrito</h3>
+        <div id="cartItems"></div>
+        <div id="cartTotal">Total: $0.00</div>
+        <button id="checkoutBtn" class="btn">Comprar</button>
+      </aside>
+    </div>
+
+    <div class="footer">Demo estilo Spotify — tienda de vapes (simulada)</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://astrrfugwtzgrzlyycfc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_LLjrQ-AVwqV6Iw4yb4rWwA_0o95vMNf';
+    const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient
+      : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient
+      : (window.supabaseLib && window.supabaseLib.createClient) ? window.supabaseLib.createClient
+      : null;
+    if (!createClient) throw new Error('Supabase library not found');
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // require auth
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      const user = data?.user || null;
+      if (!user) { window.location.href = 'login.html'; return; }
+      document.getElementById('userEmail').textContent = user.email;
+    })();
+
+    const PRODUCTS = [
+      { id: 1, name: 'Vape Classic', price: 19.99, desc: 'Disposable - 600 puffs' },
+      { id: 2, name: 'Vape Pro', price: 29.99, desc: 'Rechargeable kit' },
+      { id: 3, name: 'Mint Breeze', price: 17.50, desc: 'Mint disposable' },
+      { id: 4, name: 'Blueberry', price: 18.50, desc: 'Smooth blueberry' },
+      { id: 5, name: 'Cherry', price: 18.99, desc: 'Cherry flavor' },
+      { id: 6, name: 'Nic Salt 20mg', price: 9.99, desc: 'Bottle 10ml' }
+    ];
+
+    const productsEl = document.getElementById('products');
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartTotalEl = document.getElementById('cartTotal');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+
+    const cart = [];
+
+    function renderProducts(){
+      productsEl.innerHTML = '';
+      PRODUCTS.forEach(p => {
+        const c = document.createElement('div'); c.className='product-card';
+        c.innerHTML = `<strong>${p.name}</strong><div class="muted">${p.desc}</div><div style="margin-top:8px">$${p.price.toFixed(2)}</div><button data-id="${p.id}">Agregar</button>`;
+        productsEl.appendChild(c);
+      });
+      productsEl.querySelectorAll('button').forEach(b => b.addEventListener('click', () => addToCart(Number(b.dataset.id))));
+    }
+
+    function addToCart(id){
+      const p = PRODUCTS.find(x=>x.id===id); const e = cart.find(x=>x.id===id);
+      if(e) e.qty++; else cart.push({...p,qty:1}); renderCart();
+    }
+    function renderCart(){
+      cartItemsEl.innerHTML=''; let total=0; cart.forEach(i=>{ total+=i.price*i.qty; const d=document.createElement('div'); d.textContent=`${i.name} x${i.qty} - $${(i.price*i.qty).toFixed(2)}`; cartItemsEl.appendChild(d); }); cartTotalEl.textContent=`Total: $${total.toFixed(2)}`;
+    }
+
+    checkoutBtn.addEventListener('click', async ()=>{
+      const { data } = await supabase.auth.getUser(); if(!data?.user){ alert('Inicia sesión para comprar'); window.location.href='login.html'; return; }
+      if(cart.length===0){ alert('Carrito vacío'); return; }
+      alert('Compra simulada. Gracias, ' + data.user.email);
+      cart.length=0; renderCart();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async ()=>{ await supabase.auth.signOut(); window.location.href='login.html'; });
+
+    renderProducts();
+  </script>
+</body>
+</html>

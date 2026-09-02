@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ingresar - Vapeify</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="root">
+  <div class="container">
+    <div class="login-card">
+      <h1>Bienvenido a Vapeify</h1>
+      <p class="muted">Inicia sesión para acceder a la tienda</p>
+      <input id="email" class="input" type="email" placeholder="Correo electrónico">
+      <input id="password" class="input" type="password" placeholder="Contraseña">
+      <div style="display:flex;gap:8px">
+        <button id="signin" class="btn">Ingresar</button>
+        <button id="signup" class="btn" style="background:#2b2b2b;color:#fff">Registrarse</button>
+      </div>
+      <p class="muted" style="margin-top:12px">Al registrarte aceptas los términos. Debes tener 21+ años.</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://astrrfugwtzgrzlyycfc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_LLjrQ-AVwqV6Iw4yb4rWwA_0o95vMNf';
+    const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient
+      : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient
+      : (window.supabaseLib && window.supabaseLib.createClient) ? window.supabaseLib.createClient
+      : null;
+    if (!createClient) throw new Error('Supabase library not found');
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.getElementById('signin').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) { alert('Error: ' + error.message); return; }
+      // success -> go to shop
+      window.location.href = 'shop.html';
+    });
+
+    document.getElementById('signup').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) { alert('Registro error: ' + error.message); return; }
+      alert('Registro iniciado. Revisa tu email para confirmar si aplica.');
+    });
+
+    // If already logged in, redirect to shop
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) window.location.href = 'shop.html';
+    })();
+  </script>
+</body>
+</html>
