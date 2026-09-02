@@ -7,5 +7,111 @@
 </head>
 <body>
     <p>hola esta es una prueba </p>
+    <hr>
+    <h2>Autenticación</h2>
+    <div id="auth">
+        <h3>Registro</h3>
+        <input id="signupEmail" type="email" placeholder="Email">
+        <input id="signupPass" type="password" placeholder="Password">
+        <button id="signupBtn">Registrarse</button>
+
+        <h3>Ingreso</h3>
+        <input id="signinEmail" type="email" placeholder="Email">
+        <input id="signinPass" type="password" placeholder="Password">
+        <button id="signinBtn">Ingresar</button>
+
+        <button id="signoutBtn">Cerrar sesión</button>
+        <div id="userInfo">No autenticado</div>
+    </div>
+
+    <h2>Supabase test</h2>
+    <label>Table name: <input id="table" value="" placeholder="Enter table name"></label>
+    <button id="testBtn">Probar Supabase</button>
+    <pre id="output"></pre>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+    <script>
+        // Supabase connection - use publishable key only for client-side auth
+        const SUPABASE_URL = 'https://astrrfugwtzgrzlyycfc.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_LLjrQ-AVwqV6Iw4yb4rWwA_0o95vMNf';
+
+        // detect global createClient exported by CDN bundle
+        const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient
+            : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient
+            : (window.supabaseLib && window.supabaseLib.createClient) ? window.supabaseLib.createClient
+            : null;
+
+        if (!createClient) {
+            document.getElementById('output').textContent = 'Error: No se pudo cargar la librería de Supabase desde CDN.';
+            throw new Error('Supabase client factory not found');
+        }
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Auth handlers
+        const userInfo = document.getElementById('userInfo');
+        async function updateUser() {
+            try {
+                const { data } = await supabase.auth.getUser();
+                const user = data?.user || null;
+                userInfo.textContent = user ? `Conectado: ${user.email}` : 'No autenticado';
+            } catch (e) {
+                userInfo.textContent = 'Error obteniendo usuario';
+            }
+        }
+
+        document.getElementById('signupBtn').addEventListener('click', async () => {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPass').value;
+            const { data, error } = await supabase.auth.signUp({ email, password });
+            if (error) {
+                alert('Registro error: ' + error.message);
+            } else {
+                alert('Registro iniciado. Revisa tu email si se requiere confirmación.');
+            }
+            updateUser();
+        });
+
+        document.getElementById('signinBtn').addEventListener('click', async () => {
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPass').value;
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                alert('Ingreso error: ' + error.message);
+            } else {
+                alert('Ingreso exitoso');
+            }
+            updateUser();
+        });
+
+        document.getElementById('signoutBtn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            updateUser();
+        });
+
+        // Supabase test button
+        const out = document.getElementById('output');
+        document.getElementById('testBtn').addEventListener('click', async () => {
+            out.textContent = 'Probando conexión...';
+            const table = document.getElementById('table').value.trim();
+            if (!table) {
+                out.textContent = 'Introduce un nombre de tabla para probar.';
+                return;
+            }
+            try {
+                const { data, error } = await supabase.from(table).select('*').limit(10);
+                if (error) {
+                    out.textContent = 'Error: ' + error.message;
+                } else {
+                    out.textContent = JSON.stringify(data, null, 2) || 'No rows returned.';
+                }
+            } catch (err) {
+                out.textContent = 'Exception: ' + err.message;
+            }
+        });
+
+        // Init
+        updateUser();
+    </script>
 </body>
 </html>
