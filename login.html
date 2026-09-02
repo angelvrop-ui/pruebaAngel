@@ -24,31 +24,11 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+  <script src="auth.js"></script>
   <script>
-    // Read Supabase config from a `config.js` (recommended) or replace the placeholders below.
-    // Create a file named `config.js` with: window.SUPABASE_URL = 'https://...'; window.SUPABASE_KEY = 'sb_publishable_...';
-    const SUPABASE_URL = window.SUPABASE_URL || 'REPLACE_WITH_SUPABASE_URL';
-    const SUPABASE_KEY = window.SUPABASE_KEY || 'REPLACE_WITH_PUBLISHABLE_KEY';
-
-    if (SUPABASE_URL.startsWith('REPLACE')) {
-      console.warn('Supabase config not provided. Create config.js with window.SUPABASE_URL and window.SUPABASE_KEY.');
-      // Show a friendly message in-page
-      const warn = document.createElement('div');
-      warn.style.margin = '12px';
-      warn.style.color = '#b33';
-      warn.textContent = 'Falta configuración de Supabase. Crea config.js con las variables SUPABASE_URL y SUPABASE_KEY.';
-      document.querySelector('.login-card').insertBefore(warn, document.querySelector('.login-card').firstChild);
-    }
-
-    if (!window.supabase || !window.supabase.createClient) {
-      console.error('Supabase client library no encontrada. ¿El CDN se cargó correctamente?');
-    }
-
-    const supabase = (window.supabase && window.supabase.createClient)
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-      : null;
-
+    // UI helpers that use window.Auth
     const msgEl = document.createElement('div');
     msgEl.id = 'authMessage';
     msgEl.style.marginTop = '12px';
@@ -59,67 +39,48 @@
       msgEl.style.color = isError ? '#b33' : '#2b7';
     }
 
-    async function handleSignIn() {
-      if (!supabase) { showMessage('Cliente Supabase no inicializado.', true); return; }
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      if (!email || !password) { showMessage('Email y contraseña son requeridos.', true); return; }
-
-      showMessage('Ingresando...');
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          showMessage('Error: ' + error.message, true);
-          return;
-        }
-        showMessage('Ingreso correcto. Redirigiendo...');
-        // short delay so user sees the message
-        setTimeout(() => { window.location.href = 'shop.html'; }, 600);
-      } catch (err) {
-        console.error(err);
-        showMessage('Error al iniciar sesión.', true);
-      }
+    function setButtonsDisabled(disabled) {
+      document.getElementById('signin').disabled = disabled;
+      document.getElementById('signup').disabled = disabled;
     }
 
-    async function handleSignUp() {
-      if (!supabase) { showMessage('Cliente Supabase no inicializado.', true); return; }
+    async function onSignIn() {
+      setButtonsDisabled(true);
+      showMessage('Ingresando...');
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) { showMessage('Email y contraseña son requeridos.', true); setButtonsDisabled(false); return; }
+      const { data, error } = await window.Auth.signIn(email, password);
+      if (error) { showMessage(error.message || String(error), true); setButtonsDisabled(false); return; }
+      showMessage('Ingreso correcto. Redirigiendo...');
+      setTimeout(() => { window.location.href = 'shop.html'; }, 600);
+    }
+
+    async function onSignUp() {
+      setButtonsDisabled(true);
+      showMessage('Creando cuenta...');
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       const fullName = document.getElementById('fullName').value.trim();
       const dob = document.getElementById('dob').value;
-      if (!email || !password) { showMessage('Email y contraseña son requeridos.', true); return; }
-      if (!fullName) { showMessage('Introduce tu nombre completo.', true); return; }
-      if (!dob) { showMessage('Introduce tu fecha de nacimiento.', true); return; }
+      if (!email || !password) { showMessage('Email y contraseña son requeridos.', true); setButtonsDisabled(false); return; }
+      if (!fullName) { showMessage('Introduce tu nombre completo.', true); setButtonsDisabled(false); return; }
+      if (!dob) { showMessage('Introduce tu fecha de nacimiento.', true); setButtonsDisabled(false); return; }
 
-      showMessage('Creando cuenta...');
-      try {
-        // add user metadata so it appears in the auth user (optional)
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName, dob } } });
-        if (error) { showMessage('Registro error: ' + error.message, true); return; }
-
-        const userId = data.user?.id || null;
-        if (userId) {
-          // Try to insert a profile row. This requires the `profiles` table and RLS policies.
-          const { error: errProfile } = await supabase.from('profiles').insert([{ user_id: userId, full_name: fullName, email, dob }]);
-          if (errProfile) console.warn('No se pudo insertar perfil:', errProfile.message);
-        }
-
-        showMessage('Registro iniciado. Revisa tu email para confirmar si aplica.');
-      } catch (err) {
-        console.error(err);
-        showMessage('Error al registrar usuario.', true);
-      }
+      const { data, error } = await window.Auth.signUp(email, password, { full_name: fullName, dob });
+      if (error) { showMessage(error.message || String(error), true); setButtonsDisabled(false); return; }
+      showMessage('Registro iniciado. Revisa tu email para confirmar si aplica.');
+      setButtonsDisabled(false);
     }
 
-    document.getElementById('signin').addEventListener('click', handleSignIn);
-    document.getElementById('signup').addEventListener('click', handleSignUp);
+    document.getElementById('signin').addEventListener('click', onSignIn);
+    document.getElementById('signup').addEventListener('click', onSignUp);
 
-    // If already logged in, redirect to shop
+    // Redirect if already authenticated
     (async () => {
-      if (!supabase) return;
       try {
-        const { data } = await supabase.auth.getUser();
-        if (data?.user) window.location.href = 'shop.html';
+        const { data, error } = await window.Auth.getUser();
+        if (!error && data?.user) window.location.href = 'shop.html';
       } catch (e) { /* ignore */ }
     })();
   </script>
