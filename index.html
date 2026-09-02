@@ -1,221 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 16px; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .product { border: 1px solid #ddd; padding: 8px; }
-        #store { display: grid; grid-template-columns: 1fr 300px; gap: 16px; }
-        #cart { border: 1px solid #ccc; padding: 8px; }
-        #auth { display: flex; gap: 12px; }
-        .auth-column { display: flex; flex-direction: column; gap: 6px; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Suministros Escolares - OfficeShop</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .hero{display:flex;align-items:center;gap:24px;padding:48px 0}
+    .hero .copy{max-width:620px}
+    .hero h1{font-size:40px;margin:0 0 12px}
+    .hero p{color:var(--muted);margin:0 0 18px}
+    .categories{display:flex;gap:12px;margin:20px 0}
+    .cat{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:8px;flex:1;text-align:center}
+    .featured{margin-top:18px}
+  </style>
 </head>
-<body>
-    <p>hola esta es una prueba </p>
-    <hr>
-    <h2>Cuenta</h2>
-    <div id="auth">
-        <div class="auth-column">
-            <h3>Registro</h3>
-            <input id="signupEmail" type="email" placeholder="Email">
-            <input id="signupPass" type="password" placeholder="Password">
-            <label>Fecha de nacimiento: <input id="signupDob" type="date"></label>
-            <button id="signupBtn">Registrarse</button>
-        </div>
-        <div class="auth-column">
-            <h3>Ingreso</h3>
-            <input id="signinEmail" type="email" placeholder="Email">
-            <input id="signinPass" type="password" placeholder="Password">
-            <button id="signinBtn">Ingresar</button>
-        </div>
-        <div class="auth-column">
-            <button id="signoutBtn">Cerrar sesión</button>
-            <div id="userInfo">No autenticado</div>
-        </div>
+<body class="root">
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">OfficeShop</div>
+      <div>
+        <a href="login.html" style="color:var(--muted);margin-right:12px">Ingresar</a>
+        <a href="shop.html" class="btn">Ir a la tienda</a>
+      </div>
     </div>
 
-    <hr>
-    <section id="store">
-        <h2>Tienda - Vapes</h2>
-        <div id="products" class="grid"></div>
-        <aside id="cart">
-            <h3>Carrito</h3>
-            <div id="cartItems"></div>
-            <div id="cartTotal">Total: $0.00</div>
-            <button id="checkoutBtn">Checkout (Simulado)</button>
-        </aside>
+    <section class="hero">
+      <div class="copy">
+        <h1>Todo para la oficina y la escuela, entregado rápido</h1>
+        <p>Libretas, bolígrafos, mochilas y más — precios competitivos y envíos confiables. Encuentra lo que necesitas para estudiar y trabajar.</p>
+        <div style="display:flex;gap:12px">
+          <a href="shop.html" class="btn">Comprar ahora</a>
+          <a href="shop.html" style="color:var(--muted);align-self:center">Ver categorías</a>
+        </div>
+      </div>
+      <div style="flex:1">
+        <div class="art" style="width:320px;height:220px;border-radius:12px;background:linear-gradient(135deg,#1DB954,#0a7f4f)"></div>
+      </div>
     </section>
 
-    <h2>Supabase test</h2>
-    <label>Table name: <input id="table" value="" placeholder="Enter table name"></label>
-    <button id="testBtn">Probar Supabase</button>
-    <pre id="output"></pre>
+    <section class="categories">
+      <div class="cat">Papelería</div>
+      <div class="cat">Mochilas</div>
+      <div class="cat">Material de oficina</div>
+      <div class="cat">Accesorios</div>
+    </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
-    <script>
-        // Supabase connection - use publishable key only for client-side auth
-        const SUPABASE_URL = 'https://astrrfugwtzgrzlyycfc.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_LLjrQ-AVwqV6Iw4yb4rWwA_0o95vMNf';
+    <section class="featured">
+      <h2>Productos destacados</h2>
+      <div class="grid">
+        <div class="product-card">
+          <div class="art"></div>
+          <div style="margin-top:8px"><strong>Cuaderno A5 - 100 hojas</strong><div class="muted">Cuaderno rayado para toma de notas</div><div class="price">$3.99</div></div>
+        </div>
+        <div class="product-card">
+          <div class="art"></div>
+          <div style="margin-top:8px"><strong>Bolígrafo Gel Pack x5</strong><div class="muted">Suave y resistente</div><div class="price">$4.50</div></div>
+        </div>
+        <div class="product-card">
+          <div class="art"></div>
+          <div style="margin-top:8px"><strong>Mochila Escolar</strong><div class="muted">Compartimentos múltiples</div><div class="price">$29.99</div></div>
+        </div>
+      </div>
+    </section>
 
-        // detect global createClient exported by CDN bundle
-        const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient
-            : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient
-            : (window.supabaseLib && window.supabaseLib.createClient) ? window.supabaseLib.createClient
-            : null;
+    <div class="footer">OfficeShop — suministros escolares y de oficina • Demo</div>
+  </div>
 
-        if (!createClient) {
-            document.getElementById('output').textContent = 'Error: No se pudo cargar la librería de Supabase desde CDN.';
-            throw new Error('Supabase client factory not found');
-        }
-
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Auth handlers
-        const userInfo = document.getElementById('userInfo');
-        async function updateUser() {
-            try {
-                const { data } = await supabase.auth.getUser();
-                const user = data?.user || null;
-                userInfo.textContent = user ? `Conectado: ${user.email}` : 'No autenticado';
-            } catch (e) {
-                userInfo.textContent = 'Error obteniendo usuario';
-            }
-        }
-
-        document.getElementById('signupBtn').addEventListener('click', async () => {
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPass').value;
-            const dob = document.getElementById('signupDob').value;
-            if (!dob) { alert('Introduce tu fecha de nacimiento.'); return; }
-            const age = getAge(dob);
-            if (age < 21) { alert('Debes tener al menos 21 años para registrarte.'); return; }
-            const { data, error } = await supabase.auth.signUp({ email, password });
-            if (error) {
-                alert('Registro error: ' + error.message);
-            } else {
-                alert('Registro iniciado. Revisa tu email si se requiere confirmación.');
-            }
-            updateUser();
-        });
-
-        document.getElementById('signinBtn').addEventListener('click', async () => {
-            const email = document.getElementById('signinEmail').value;
-            const password = document.getElementById('signinPass').value;
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                alert('Ingreso error: ' + error.message);
-            } else {
-                alert('Ingreso exitoso');
-            }
-            updateUser();
-        });
-
-        document.getElementById('signoutBtn').addEventListener('click', async () => {
-            await supabase.auth.signOut();
-            updateUser();
-        });
-
-        function getAge(dob) {
-            const b = new Date(dob);
-            const diff = Date.now() - b.getTime();
-            const ageDt = new Date(diff);
-            return Math.abs(ageDt.getUTCFullYear() - 1970);
-        }
-
-        // Supabase test button
-        const out = document.getElementById('output');
-        document.getElementById('testBtn').addEventListener('click', async () => {
-            out.textContent = 'Probando conexión...';
-            const table = document.getElementById('table').value.trim();
-            if (!table) {
-                out.textContent = 'Introduce un nombre de tabla para probar.';
-                return;
-            }
-            try {
-                const { data, error } = await supabase.from(table).select('*').limit(10);
-                if (error) {
-                    out.textContent = 'Error: ' + error.message;
-                } else {
-                    out.textContent = JSON.stringify(data, null, 2) || 'No rows returned.';
-                }
-            } catch (err) {
-                out.textContent = 'Exception: ' + err.message;
-            }
-        });
-
-        // --- Store & Cart functionality (client-side demo) ---
-        const productsEl = document.getElementById('products');
-        const cartItemsEl = document.getElementById('cartItems');
-        const cartTotalEl = document.getElementById('cartTotal');
-        const checkoutBtn = document.getElementById('checkoutBtn');
-
-        const PRODUCTS = [
-            { id: 1, name: 'Vape Classic', price: 19.99, desc: 'Disposable vape - 600 puffs', img: '' },
-            { id: 2, name: 'Vape Pro', price: 29.99, desc: 'Rechargeable kit', img: '' },
-            { id: 3, name: 'Vape Mint', price: 17.5, desc: 'Mint flavor disposable', img: '' }
-        ];
-
-        const cart = [];
-
-        function renderProducts() {
-            productsEl.innerHTML = '';
-            PRODUCTS.forEach(p => {
-                const el = document.createElement('div');
-                el.className = 'product';
-                el.innerHTML = `
-                    <strong>${p.name}</strong>
-                    <div>${p.desc}</div>
-                    <div>$${p.price.toFixed(2)}</div>
-                    <button data-id="${p.id}">Agregar al carrito</button>
-                `;
-                productsEl.appendChild(el);
-            });
-            productsEl.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-                const id = Number(b.getAttribute('data-id'));
-                addToCart(id);
-            }));
-        }
-
-        function addToCart(id) {
-            const p = PRODUCTS.find(x => x.id === id);
-            const existing = cart.find(c => c.id === id);
-            if (existing) existing.qty++;
-            else cart.push({ ...p, qty: 1 });
-            renderCart();
-        }
-
-        function renderCart() {
-            cartItemsEl.innerHTML = '';
-            let total = 0;
-            cart.forEach(item => {
-                total += item.price * item.qty;
-                const d = document.createElement('div');
-                d.textContent = `${item.name} x${item.qty} - $${(item.price * item.qty).toFixed(2)}`;
-                cartItemsEl.appendChild(d);
-            });
-            cartTotalEl.textContent = `Total: $${total.toFixed(2)}`;
-        }
-
-        checkoutBtn.addEventListener('click', async () => {
-            // require authenticated user
-            const { data } = await supabase.auth.getUser();
-            const user = data?.user || null;
-            if (!user) { alert('Debes iniciar sesión para comprar.'); return; }
-            // simple age enforcement - in signup we required DOB >=21; double-check if available in profile
-            // This is a demo: simulate order placement
-            if (cart.length === 0) { alert('Carrito vacío.'); return; }
-            alert('Pedido simulado realizado. Gracias, ' + user.email);
-            cart.length = 0; renderCart();
-        });
-
-        renderProducts();
-
-        // Init
-        updateUser();
-    </script>
+  <script>
+    // Keep minimal JS: redirect CTA handled by links. If you want dynamic featured loading, puedo integrarlo.
+  </script>
 </body>
 </html>
