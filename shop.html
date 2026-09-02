@@ -72,12 +72,12 @@
     })();
 
     const PRODUCTS = [
-      { id: 1, name: 'Vape Classic', price: 19.99, desc: 'Disposable - 600 puffs' },
-      { id: 2, name: 'Vape Pro', price: 29.99, desc: 'Rechargeable kit' },
-      { id: 3, name: 'Mint Breeze', price: 17.50, desc: 'Mint disposable' },
-      { id: 4, name: 'Blueberry', price: 18.50, desc: 'Smooth blueberry' },
-      { id: 5, name: 'Cherry', price: 18.99, desc: 'Cherry flavor' },
-      { id: 6, name: 'Nic Salt 20mg', price: 9.99, desc: 'Bottle 10ml' }
+      { id: 1, name: 'Cuaderno A5', price: 3.99, desc: 'Cuaderno rayado, 100 hojas', img: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80' },
+      { id: 2, name: 'Bolígrafo Gel x5', price: 4.5, desc: 'Pack de 5 bolígrafos gel', img: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=800&q=80' },
+      { id: 3, name: 'Mochila Escolar', price: 29.99, desc: 'Mochila con compartimentos', img: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=800&q=80' },
+      { id: 4, name: 'Estuche Organizador', price: 9.5, desc: 'Estuche para lápices', img: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80' },
+      { id: 5, name: 'Marcadores Pack', price: 6.99, desc: 'Pack de marcadores de colores', img: 'https://images.unsplash.com/photo-1596495577886-d920f1fb1d61?auto=format&fit=crop&w=800&q=80' },
+      { id: 6, name: 'Tijeras', price: 2.99, desc: 'Tijeras para manualidades', img: 'https://images.unsplash.com/photo-1516453492142-48d0d9f1a1f5?auto=format&fit=crop&w=800&q=80' }
     ];
 
     const productsEl = document.getElementById('products');
@@ -93,8 +93,9 @@
       const list = PRODUCTS.filter(p => (p.name + ' ' + p.desc).toLowerCase().includes(filter.toLowerCase()));
       list.forEach(p => {
         const c = document.createElement('div'); c.className='product-card';
+        const imgStyle = p.img ? `background-image:url('${p.img}')` : '';
         c.innerHTML = `
-          <div class="art"></div>
+          <div class="art" style="${imgStyle}"></div>
           <div class="prod-info">
             <strong>${p.name}</strong>
             <div class="muted">${p.desc}</div>
