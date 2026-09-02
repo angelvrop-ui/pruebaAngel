@@ -1,0 +1,5 @@
+// Example config.js - copy to `config.js` and fill with your Supabase info
+// Do NOT commit `config.js` with real keys. Add `config.js` to .gitignore.
+
+window.SUPABASE_URL = 'https://your-project.supabase.co';
+window.SUPABASE_KEY = 'sb_publishable_XXXXXXXXXXXXXXXXXXXXXXXX';
