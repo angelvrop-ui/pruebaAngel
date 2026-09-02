@@ -26,54 +26,101 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
   <script>
-    const SUPABASE_URL = 'https://astrrfugwtzgrzlyycfc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_LLjrQ-AVwqV6Iw4yb4rWwA_0o95vMNf';
-    const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient
-      : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient
-      : (window.supabaseLib && window.supabaseLib.createClient) ? window.supabaseLib.createClient
+    // Read Supabase config from a `config.js` (recommended) or replace the placeholders below.
+    // Create a file named `config.js` with: window.SUPABASE_URL = 'https://...'; window.SUPABASE_KEY = 'sb_publishable_...';
+    const SUPABASE_URL = window.SUPABASE_URL || 'REPLACE_WITH_SUPABASE_URL';
+    const SUPABASE_KEY = window.SUPABASE_KEY || 'REPLACE_WITH_PUBLISHABLE_KEY';
+
+    if (SUPABASE_URL.startsWith('REPLACE')) {
+      console.warn('Supabase config not provided. Create config.js with window.SUPABASE_URL and window.SUPABASE_KEY.');
+      // Show a friendly message in-page
+      const warn = document.createElement('div');
+      warn.style.margin = '12px';
+      warn.style.color = '#b33';
+      warn.textContent = 'Falta configuración de Supabase. Crea config.js con las variables SUPABASE_URL y SUPABASE_KEY.';
+      document.querySelector('.login-card').insertBefore(warn, document.querySelector('.login-card').firstChild);
+    }
+
+    if (!window.supabase || !window.supabase.createClient) {
+      console.error('Supabase client library no encontrada. ¿El CDN se cargó correctamente?');
+    }
+
+    const supabase = (window.supabase && window.supabase.createClient)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
       : null;
-    if (!createClient) throw new Error('Supabase library not found');
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.getElementById('signin').addEventListener('click', async () => {
-      const email = document.getElementById('email').value;
+    const msgEl = document.createElement('div');
+    msgEl.id = 'authMessage';
+    msgEl.style.marginTop = '12px';
+    document.querySelector('.login-card').appendChild(msgEl);
+
+    function showMessage(text, isError = false) {
+      msgEl.textContent = text;
+      msgEl.style.color = isError ? '#b33' : '#2b7';
+    }
+
+    async function handleSignIn() {
+      if (!supabase) { showMessage('Cliente Supabase no inicializado.', true); return; }
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) { alert('Error: ' + error.message); return; }
-      // success -> go to shop
-      window.location.href = 'shop.html';
-    });
+      if (!email || !password) { showMessage('Email y contraseña son requeridos.', true); return; }
 
-    document.getElementById('signup').addEventListener('click', async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const fullName = document.getElementById('fullName').value;
-      const dob = document.getElementById('dob').value;
-      if (!email || !password) { alert('Email y contraseña son requeridos.'); return; }
-      if (!fullName) { alert('Introduce tu nombre completo.'); return; }
-      if (!dob) { alert('Introduce tu fecha de nacimiento.'); return; }
-
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) { alert('Registro error: ' + error.message); return; }
-
-      // If user is created, save profile in 'profiles' table
+      showMessage('Ingresando...');
       try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          showMessage('Error: ' + error.message, true);
+          return;
+        }
+        showMessage('Ingreso correcto. Redirigiendo...');
+        // short delay so user sees the message
+        setTimeout(() => { window.location.href = 'shop.html'; }, 600);
+      } catch (err) {
+        console.error(err);
+        showMessage('Error al iniciar sesión.', true);
+      }
+    }
+
+    async function handleSignUp() {
+      if (!supabase) { showMessage('Cliente Supabase no inicializado.', true); return; }
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const fullName = document.getElementById('fullName').value.trim();
+      const dob = document.getElementById('dob').value;
+      if (!email || !password) { showMessage('Email y contraseña son requeridos.', true); return; }
+      if (!fullName) { showMessage('Introduce tu nombre completo.', true); return; }
+      if (!dob) { showMessage('Introduce tu fecha de nacimiento.', true); return; }
+
+      showMessage('Creando cuenta...');
+      try {
+        // add user metadata so it appears in the auth user (optional)
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName, dob } } });
+        if (error) { showMessage('Registro error: ' + error.message, true); return; }
+
         const userId = data.user?.id || null;
         if (userId) {
+          // Try to insert a profile row. This requires the `profiles` table and RLS policies.
           const { error: errProfile } = await supabase.from('profiles').insert([{ user_id: userId, full_name: fullName, email, dob }]);
-          if (errProfile) console.warn('Profile insert warning', errProfile.message);
+          if (errProfile) console.warn('No se pudo insertar perfil:', errProfile.message);
         }
-      } catch (e) {
-        console.error('Profile insert exception', e);
-      }
 
-      alert('Registro iniciado. Revisa tu email para confirmar si aplica.');
-    });
+        showMessage('Registro iniciado. Revisa tu email para confirmar si aplica.');
+      } catch (err) {
+        console.error(err);
+        showMessage('Error al registrar usuario.', true);
+      }
+    }
+
+    document.getElementById('signin').addEventListener('click', handleSignIn);
+    document.getElementById('signup').addEventListener('click', handleSignUp);
 
     // If already logged in, redirect to shop
     (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) window.location.href = 'shop.html';
+      if (!supabase) return;
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user) window.location.href = 'shop.html';
+      } catch (e) { /* ignore */ }
     })();
   </script>
 </body>
