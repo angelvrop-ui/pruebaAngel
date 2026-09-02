@@ -4,25 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 16px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .product { border: 1px solid #ddd; padding: 8px; }
+        #store { display: grid; grid-template-columns: 1fr 300px; gap: 16px; }
+        #cart { border: 1px solid #ccc; padding: 8px; }
+        #auth { display: flex; gap: 12px; }
+        .auth-column { display: flex; flex-direction: column; gap: 6px; }
+    </style>
 </head>
 <body>
     <p>hola esta es una prueba </p>
     <hr>
-    <h2>Autenticación</h2>
+    <h2>Cuenta</h2>
     <div id="auth">
-        <h3>Registro</h3>
-        <input id="signupEmail" type="email" placeholder="Email">
-        <input id="signupPass" type="password" placeholder="Password">
-        <button id="signupBtn">Registrarse</button>
-
-        <h3>Ingreso</h3>
-        <input id="signinEmail" type="email" placeholder="Email">
-        <input id="signinPass" type="password" placeholder="Password">
-        <button id="signinBtn">Ingresar</button>
-
-        <button id="signoutBtn">Cerrar sesión</button>
-        <div id="userInfo">No autenticado</div>
+        <div class="auth-column">
+            <h3>Registro</h3>
+            <input id="signupEmail" type="email" placeholder="Email">
+            <input id="signupPass" type="password" placeholder="Password">
+            <label>Fecha de nacimiento: <input id="signupDob" type="date"></label>
+            <button id="signupBtn">Registrarse</button>
+        </div>
+        <div class="auth-column">
+            <h3>Ingreso</h3>
+            <input id="signinEmail" type="email" placeholder="Email">
+            <input id="signinPass" type="password" placeholder="Password">
+            <button id="signinBtn">Ingresar</button>
+        </div>
+        <div class="auth-column">
+            <button id="signoutBtn">Cerrar sesión</button>
+            <div id="userInfo">No autenticado</div>
+        </div>
     </div>
+
+    <hr>
+    <section id="store">
+        <h2>Tienda - Vapes</h2>
+        <div id="products" class="grid"></div>
+        <aside id="cart">
+            <h3>Carrito</h3>
+            <div id="cartItems"></div>
+            <div id="cartTotal">Total: $0.00</div>
+            <button id="checkoutBtn">Checkout (Simulado)</button>
+        </aside>
+    </section>
 
     <h2>Supabase test</h2>
     <label>Table name: <input id="table" value="" placeholder="Enter table name"></label>
@@ -63,6 +89,10 @@
         document.getElementById('signupBtn').addEventListener('click', async () => {
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPass').value;
+            const dob = document.getElementById('signupDob').value;
+            if (!dob) { alert('Introduce tu fecha de nacimiento.'); return; }
+            const age = getAge(dob);
+            if (age < 21) { alert('Debes tener al menos 21 años para registrarte.'); return; }
             const { data, error } = await supabase.auth.signUp({ email, password });
             if (error) {
                 alert('Registro error: ' + error.message);
@@ -89,6 +119,13 @@
             updateUser();
         });
 
+        function getAge(dob) {
+            const b = new Date(dob);
+            const diff = Date.now() - b.getTime();
+            const ageDt = new Date(diff);
+            return Math.abs(ageDt.getUTCFullYear() - 1970);
+        }
+
         // Supabase test button
         const out = document.getElementById('output');
         document.getElementById('testBtn').addEventListener('click', async () => {
@@ -109,6 +146,73 @@
                 out.textContent = 'Exception: ' + err.message;
             }
         });
+
+        // --- Store & Cart functionality (client-side demo) ---
+        const productsEl = document.getElementById('products');
+        const cartItemsEl = document.getElementById('cartItems');
+        const cartTotalEl = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        const PRODUCTS = [
+            { id: 1, name: 'Vape Classic', price: 19.99, desc: 'Disposable vape - 600 puffs', img: '' },
+            { id: 2, name: 'Vape Pro', price: 29.99, desc: 'Rechargeable kit', img: '' },
+            { id: 3, name: 'Vape Mint', price: 17.5, desc: 'Mint flavor disposable', img: '' }
+        ];
+
+        const cart = [];
+
+        function renderProducts() {
+            productsEl.innerHTML = '';
+            PRODUCTS.forEach(p => {
+                const el = document.createElement('div');
+                el.className = 'product';
+                el.innerHTML = `
+                    <strong>${p.name}</strong>
+                    <div>${p.desc}</div>
+                    <div>$${p.price.toFixed(2)}</div>
+                    <button data-id="${p.id}">Agregar al carrito</button>
+                `;
+                productsEl.appendChild(el);
+            });
+            productsEl.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+                const id = Number(b.getAttribute('data-id'));
+                addToCart(id);
+            }));
+        }
+
+        function addToCart(id) {
+            const p = PRODUCTS.find(x => x.id === id);
+            const existing = cart.find(c => c.id === id);
+            if (existing) existing.qty++;
+            else cart.push({ ...p, qty: 1 });
+            renderCart();
+        }
+
+        function renderCart() {
+            cartItemsEl.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                const d = document.createElement('div');
+                d.textContent = `${item.name} x${item.qty} - $${(item.price * item.qty).toFixed(2)}`;
+                cartItemsEl.appendChild(d);
+            });
+            cartTotalEl.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        checkoutBtn.addEventListener('click', async () => {
+            // require authenticated user
+            const { data } = await supabase.auth.getUser();
+            const user = data?.user || null;
+            if (!user) { alert('Debes iniciar sesión para comprar.'); return; }
+            // simple age enforcement - in signup we required DOB >=21; double-check if available in profile
+            // This is a demo: simulate order placement
+            if (cart.length === 0) { alert('Carrito vacío.'); return; }
+            alert('Pedido simulado realizado. Gracias, ' + user.email);
+            cart.length = 0; renderCart();
+        });
+
+        renderProducts();
 
         // Init
         updateUser();
