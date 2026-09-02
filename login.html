@@ -28,6 +28,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
   <script src="auth.js"></script>
   <script>
+    // allow sessionStorage override for testing if config.js isn't available
+    if (!window.SUPABASE_URL && sessionStorage.getItem('SUPABASE_URL')) window.SUPABASE_URL = sessionStorage.getItem('SUPABASE_URL');
+    if (!window.SUPABASE_KEY && sessionStorage.getItem('SUPABASE_KEY')) window.SUPABASE_KEY = sessionStorage.getItem('SUPABASE_KEY');
     // UI helpers that use window.Auth
     const msgEl = document.createElement('div');
     msgEl.id = 'authMessage';
@@ -102,6 +105,20 @@
         diag.style.marginTop = '8px';
         diag.textContent = JSON.stringify(present, null, 2);
         document.querySelector('.login-card').appendChild(diag);
+        const manualBtn = document.createElement('button');
+        manualBtn.textContent = 'Introducir claves manualmente';
+        manualBtn.style.marginTop = '8px';
+        manualBtn.onclick = () => {
+          const url = prompt('Pega tu SUPABASE_URL (https://...):');
+          if (!url) return;
+          const key = prompt('Pega tu SUPABASE_KEY (publishable):');
+          if (!key) return;
+          sessionStorage.setItem('SUPABASE_URL', url);
+          sessionStorage.setItem('SUPABASE_KEY', key);
+          window.SUPABASE_URL = url; window.SUPABASE_KEY = key;
+          location.reload();
+        };
+        document.querySelector('.login-card').appendChild(manualBtn);
         setButtonsDisabled(true);
       }
     })();
