@@ -4,17 +4,39 @@
   const SUPABASE_KEY = window.SUPABASE_KEY || 'REPLACE_WITH_PUBLISHABLE_KEY';
 
   let supabase = null;
-  function init() {
-    if (!window.supabase || !window.supabase.createClient) {
-      console.error('Supabase library missing');
-      return null;
+  function findCreateClient() {
+    return (window.supabase && window.supabase.createClient)
+      || (window.supabaseJs && window.supabaseJs.createClient)
+      || (window.supabaseLib && window.supabaseLib.createClient)
+      || (window.Supabase && window.Supabase.createClient)
+      || null;
+  }
+
+  async function init() {
+    if (supabase) return supabase;
+    let createClient = findCreateClient();
+    if (createClient) {
+      supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      return supabase;
     }
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    return supabase;
+    // try a short polling loop in case the SDK is still loading
+    const start = Date.now();
+    const timeout = 2000; // ms
+    while (Date.now() - start < timeout) {
+      await new Promise(r => setTimeout(r, 100));
+      createClient = findCreateClient();
+      if (createClient) {
+        supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        return supabase;
+      }
+    }
+    console.error('Supabase library not found (after waiting)');
+    return null;
   }
 
   async function signIn(email, password) {
-    if (!supabase) init();
+    await init();
+    if (!supabase) return { data: null, error: new Error('Supabase client not initialized') };
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       return { data, error };
@@ -24,7 +46,8 @@
   }
 
   async function signUp(email, password, metadata = {}) {
-    if (!supabase) init();
+    await init();
+    if (!supabase) return { data: null, error: new Error('Supabase client not initialized') };
     try {
       const { data, error } = await supabase.auth.signUp({ email, password, options: { data: metadata } });
       if (error) return { data, error };
@@ -43,7 +66,8 @@
   }
 
   async function getUser() {
-    if (!supabase) init();
+    await init();
+    if (!supabase) return { data: null, error: new Error('Supabase client not initialized') };
     try {
       const { data, error } = await supabase.auth.getUser();
       return { data, error };
@@ -51,7 +75,8 @@
   }
 
   async function signOut() {
-    if (!supabase) init();
+    await init();
+    if (!supabase) return { error: new Error('Supabase client not initialized') };
     try { const { error } = await supabase.auth.signOut(); return { error }; } catch (err) { return { error: err }; }
   }
 
