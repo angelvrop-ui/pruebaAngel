@@ -18,12 +18,13 @@
 
     <div class="layout">
       <aside class="sidebar">
-        <h3 class="muted">Categorías</h3>
-        <ul style="padding-left:0;list-style:none;color:var(--muted)">
-          <li>Destacados</li>
-          <li>Desechables</li>
-          <li>Recargables</li>
-        </ul>
+        <div class="brand" style="color:#fff">Vapeify</div>
+        <div class="nav-item active">Inicio</div>
+        <div class="nav-item">Tienda</div>
+        <div class="nav-item">Desechables</div>
+        <div class="nav-item">Recargables</div>
+        <div style="flex:1"></div>
+        <div class="muted" style="font-size:12px;padding:8px">Cuenta: <span id="userEmailSidebar"></span></div>
       </aside>
 
       <main>
@@ -61,6 +62,7 @@
       const user = data?.user || null;
       if (!user) { window.location.href = 'login.html'; return; }
       document.getElementById('userEmail').textContent = user.email;
+      const s = document.getElementById('userEmailSidebar'); if(s) s.textContent = user.email;
     })();
 
     const PRODUCTS = [
@@ -83,7 +85,15 @@
       productsEl.innerHTML = '';
       PRODUCTS.forEach(p => {
         const c = document.createElement('div'); c.className='product-card';
-        c.innerHTML = `<strong>${p.name}</strong><div class="muted">${p.desc}</div><div style="margin-top:8px">$${p.price.toFixed(2)}</div><button data-id="${p.id}">Agregar</button>`;
+        c.innerHTML = `
+          <div class="art"></div>
+          <div class="prod-info">
+            <strong>${p.name}</strong>
+            <div class="muted">${p.desc}</div>
+            <div class="price">$${p.price.toFixed(2)}</div>
+          </div>
+          <button class="add" data-id="${p.id}">Agregar</button>
+        `;
         productsEl.appendChild(c);
       });
       productsEl.querySelectorAll('button').forEach(b => b.addEventListener('click', () => addToCart(Number(b.dataset.id))));

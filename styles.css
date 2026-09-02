@@ -1,18 +1,40 @@
-.root { --bg:#121212; --panel:#181818; --muted:#b3b3b3; --accent:#1DB954; --card:#222; color: #fff; }
-html,body{height:100%;margin:0;font-family:Inter, Roboto, Arial, sans-serif;background:linear-gradient(180deg,#0f0f0f 0%, #0b0b0b 100%);}
-.container{max-width:1100px;margin:28px auto;padding:20px}
-.login-card{background:var(--panel);padding:28px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.6);width:360px;margin:60px auto}
-.login-card h1{margin:0 0 12px;font-size:24px}
-.input{width:100%;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff;margin-bottom:10px}
+.root { --bg:#091015; --panel:#121212; --muted:#b3b3b3; --accent:#1DB954; --card:#0f1415; color: #fff; }
+html,body{height:100%;margin:0;font-family:Inter, Roboto, Arial, sans-serif;background:linear-gradient(180deg,#071015 0%, #071215 100%);}
+.container{max-width:1200px;margin:28px auto;padding:20px}
+.login-card{background:var(--panel);padding:28px;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.6);width:360px;margin:60px auto}
+.login-card h1{margin:0 0 12px;font-size:26px}
+.input{width:100%;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff;margin-bottom:12px}
 .btn{background:var(--accent);color:#000;padding:10px 14px;border-radius:24px;border:none;cursor:pointer;font-weight:700}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
-.brand{display:flex;align-items:center;gap:12px;color:var(--accent);font-weight:700}
-.layout{display:grid;grid-template-columns:220px 1fr 320px;gap:18px}
-.sidebar{background:var(--panel);padding:16px;border-radius:8px}
-.panel{background:var(--panel);padding:16px;border-radius:8px}
-.product-card{background:var(--card);padding:12px;border-radius:8px;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.product-card button{margin-top:8px;background:var(--accent);border:none;padding:8px 10px;border-radius:14px;cursor:pointer}
-#cartItems div{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.brand{display:flex;align-items:center;gap:12px;color:var(--accent);font-weight:800;font-size:18px}
+.layout{display:grid;grid-template-columns:200px 1fr 320px;gap:18px}
+
+/* Sidebar - Spotify-like */
+.sidebar{background:transparent;padding:8px;border-radius:8px;color:var(--muted);display:flex;flex-direction:column;gap:12px}
+.nav-item{padding:8px 12px;border-radius:6px;color:var(--muted);cursor:pointer}
+.nav-item.active{background:rgba(255,255,255,0.04);color:#fff}
+
+.panel{background:transparent;padding:12px;border-radius:8px}
+
+/* Product / Album style cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.product-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:8px;color:#fff;display:flex;flex-direction:column;align-items:flex-start;gap:8px;transition:transform .18s ease, box-shadow .18s ease}
+.product-card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+.art{width:100%;padding-top:100%;border-radius:8px;background:linear-gradient(135deg,#222 0%, #111 100%);position:relative;overflow:hidden}
+.art::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.0), rgba(0,0,0,0.35));}
+.prod-info{width:100%}
+.prod-info strong{display:block;font-size:15px;margin-bottom:4px}
+.prod-info .muted{font-size:13px;color:var(--muted)}
+.price{margin-top:6px;font-weight:700}
+.product-card .add{position:relative;margin-top:8px;background:var(--accent);border:none;padding:8px 10px;border-radius:18px;cursor:pointer;color:#000}
+
+#cartItems div{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
 .muted{color:var(--muted)}
 .footer{margin-top:24px;color:var(--muted);font-size:13px;text-align:center}
+
+@media (max-width:900px){
+	.layout{grid-template-columns:1fr;}
+	.sidebar{order:2;display:flex;flex-direction:row;gap:8px}
+	.container{padding:12px}
+	.grid{grid-template-columns:repeat(2,1fr)}
+}
