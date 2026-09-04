@@ -31,6 +31,10 @@
     // allow sessionStorage override for testing if config.js isn't available
     if (!window.SUPABASE_URL && sessionStorage.getItem('SUPABASE_URL')) window.SUPABASE_URL = sessionStorage.getItem('SUPABASE_URL');
     if (!window.SUPABASE_KEY && sessionStorage.getItem('SUPABASE_KEY')) window.SUPABASE_KEY = sessionStorage.getItem('SUPABASE_KEY');
+    // Fallback defaults (publishable key + URL) so page works without config.js
+    // These are safe publishable credentials for your project and are required for client auth.
+    if (!window.SUPABASE_URL) window.SUPABASE_URL = 'https://astrrfugwtzgrzlyycfc.supabase.co';
+    if (!window.SUPABASE_KEY) window.SUPABASE_KEY = 'sb_publishable_LLjrQ-AVwqV6Iw4yb4rWwA_0o95vMNf';
     // UI helpers that use window.Auth
     const msgEl = document.createElement('div');
     msgEl.id = 'authMessage';
