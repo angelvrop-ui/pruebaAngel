@@ -26,21 +26,33 @@
 
       <section class="services-grid">
         <article class="service-card">
-          <h3>Diseño y Desarrollo Web</h3>
-          <p>Construimos sitios a medida, optimizados para conversiones y velocidad.</p>
-          <div class="card-actions"><button class="btn" data-service="Diseño Web">Solicitar</button></div>
+          <h3>Arreglo de impresoras</h3>
+          <p>Diagnóstico en sitio, reemplazo de partes y puesta en marcha.</p>
+          <div class="card-actions"><button class="btn" data-service="Arreglo de impresoras">Solicitar servicio</button></div>
         </article>
 
         <article class="service-card">
-          <h3>Marketing Digital</h3>
-          <p>Campañas en redes, Google Ads y estrategia de contenidos.</p>
-          <div class="card-actions"><button class="btn" data-service="Marketing">Solicitar</button></div>
+          <h3>Limpieza de laptops</h3>
+          <p>Limpieza física, extracción de polvo, y mantenimiento térmico.</p>
+          <div class="card-actions"><button class="btn" data-service="Limpieza de laptops">Solicitar servicio</button></div>
         </article>
 
         <article class="service-card">
-          <h3>Consultoría de Negocio</h3>
-          <p>Diagnóstico operativo y roadmap de mejora.</p>
-          <div class="card-actions"><button class="btn" data-service="Consultoría">Solicitar</button></div>
+          <h3>Formateo y reinstalación</h3>
+          <p>Formateo seguro, respaldo opcional y reinstalación de software institucional.</p>
+          <div class="card-actions"><button class="btn" data-service="Formateo y reinstalación">Solicitar servicio</button></div>
+        </article>
+
+        <article class="service-card">
+          <h3>Instalación de software</h3>
+          <p>Instalación de suites, herramientas y configuraciones estándar.</p>
+          <div class="card-actions"><button class="btn" data-service="Instalación de software">Solicitar servicio</button></div>
+        </article>
+
+        <article class="service-card">
+          <h3>Mantenimiento preventivo</h3>
+          <p>Revisiones periódicas y acciones preventivas para equipos críticos.</p>
+          <div class="card-actions"><button class="btn" data-service="Mantenimiento preventivo">Solicitar servicio</button></div>
         </article>
       </section>
 
@@ -55,14 +67,17 @@
       document.querySelectorAll('.service-card .btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const service = btn.getAttribute('data-service');
-          const name = prompt('Tu nombre:');
+          const name = prompt('Nombre del solicitante:');
           if (!name) return alert('Nombre requerido');
-          const email = prompt('Tu correo:');
+          const department = prompt('Dependencia / Departamento:');
+          if (!department) return alert('Dependencia requerida');
+          const email = prompt('Correo institucional:');
           if (!email) return alert('Correo requerido');
+          const details = prompt('Detalles adicionales (opcional):');
           const requests = JSON.parse(localStorage.getItem('service_requests') || '[]');
-          requests.push({ service, name, email, created_at: new Date().toISOString() });
+          requests.push({ service, name, department, email, details, created_at: new Date().toISOString() });
           localStorage.setItem('service_requests', JSON.stringify(requests));
-          document.getElementById('bookingMsg').textContent = `Solicitud para "${service}" enviada. Te contactaremos pronto.`;
+          document.getElementById('bookingMsg').textContent = `Solicitud para "${service}" enviada. Se generó un ticket.`;
         });
       });
     </script>

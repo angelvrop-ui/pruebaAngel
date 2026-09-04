@@ -21,42 +21,51 @@
     <main>
       <section class="hero container">
         <div class="hero-copy">
-          <h1>Soluciones profesionales para tu negocio</h1>
-          <p class="lead">Marketing digital, diseño web, consultoría y soporte — paquetes a la medida para que tu proyecto crezca.</p>
+          <h1>Servicios de Soporte Institucional</h1>
+          <p class="lead">Mantenimiento, reparación y soporte técnico para equipos e infraestructura de la institución: arreglo de impresoras, limpieza y formateo de laptops y más.</p>
           <div class="hero-ctas">
             <a href="services.html" class="btn">Ver servicios</a>
-            <a href="#contact" class="btn ghost">Contactar</a>
+            <a href="#contact" class="btn ghost">Solicitar soporte</a>
           </div>
         </div>
         <div class="hero-art">
-          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Servicios" />
+          <img src="https://images.unsplash.com/photo-1581092795366-3b3a1f6a6c3f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Soporte técnico" />
         </div>
       </section>
 
       <section class="features container">
         <div class="feature">
-          <h3>Diseño Web</h3>
-          <p>Desarrollo de sitios modernos, rápidos y responsivos.</p>
+          <h3>Reparación de impresoras</h3>
+          <p>Diagnóstico y reparación de equipos de impresión en sitio.</p>
         </div>
         <div class="feature">
-          <h3>Marketing Digital</h3>
-          <p>Estrategias de adquisición y crecimiento enfocadas en resultados.</p>
+          <h3>Limpieza de laptops</h3>
+          <p>Mantención, limpieza interna y cambio de pasta térmica si es necesario.</p>
         </div>
         <div class="feature">
-          <h3>Consultoría</h3>
-          <p>Asesoría para optimizar procesos y aumentar eficiencia.</p>
+          <h3>Formateo y reinstalación</h3>
+          <p>Formateo seguro de dispositivos y reinstalación de sistemas y aplicaciones oficiales.</p>
         </div>
       </section>
 
       <section id="contact" class="contact container">
-        <h2>Contáctanos</h2>
-        <p>Mándanos un mensaje y te responderemos en un día hábil.</p>
+        <h2>Solicitar Soporte</h2>
+        <p>Completa el formulario con la información del equipo y la dependencia para generar un ticket.</p>
         <form id="contactForm" class="contact-form">
-          <input id="name" placeholder="Tu nombre" required />
-          <input id="email" type="email" placeholder="Tu correo" required />
-          <textarea id="message" placeholder="¿En qué podemos ayudarte?" rows="4" required></textarea>
+          <input id="name" placeholder="Nombre del solicitante" required />
+          <input id="department" placeholder="Dependencia / Departamento" required />
+          <input id="email" type="email" placeholder="Correo institucional" required />
+          <select id="serviceType" required>
+            <option value="">Selecciona el tipo de servicio</option>
+            <option>Arreglo de impresoras</option>
+            <option>Limpieza de laptops</option>
+            <option>Formateo y reinstalación</option>
+            <option>Instalación de software</option>
+            <option>Mantenimiento preventivo</option>
+          </select>
+          <textarea id="message" placeholder="Descripción del problema / Observaciones" rows="4"></textarea>
           <div class="form-actions">
-            <button type="submit" class="btn">Enviar mensaje</button>
+            <button type="submit" class="btn">Generar ticket</button>
           </div>
           <div id="contactMsg" class="muted small" style="margin-top:8px"></div>
         </form>
