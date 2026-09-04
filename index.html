@@ -1,74 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Suministros Escolares - OfficeShop</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    .hero{display:flex;align-items:center;gap:24px;padding:48px 0}
-    .hero .copy{max-width:620px}
-    .hero h1{font-size:40px;margin:0 0 12px}
-    .hero p{color:var(--muted);margin:0 0 18px}
-    .categories{display:flex;gap:12px;margin:20px 0}
-    .cat{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:8px;flex:1;text-align:center}
-    .featured{margin-top:18px}
-  </style>
-</head>
-<body class="root">
-  <div class="container">
-    <div class="topbar">
-      <div class="brand">OfficeShop</div>
-      <div>
-        <a href="login.html" style="color:var(--muted);margin-right:12px">Ingresar</a>
-        <a href="shop.html" class="btn">Ir a la tienda</a>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Servicios Profesionales - Agencia</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <div class="brand">AgenciaServicios</div>
+        <nav class="nav">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="services.html" class="nav-link">Servicios</a>
+          <a href="login.html" class="nav-link">Acceso</a>
+        </nav>
       </div>
-    </div>
+    </header>
 
-    <section class="hero">
-      <div class="copy">
-        <h1>Todo para la oficina y la escuela, entregado rápido</h1>
-        <p>Libretas, bolígrafos, mochilas y más — precios competitivos y envíos confiables. Encuentra lo que necesitas para estudiar y trabajar.</p>
-        <div style="display:flex;gap:12px">
-          <a href="shop.html" class="btn">Comprar ahora</a>
-          <a href="shop.html" style="color:var(--muted);align-self:center">Ver categorías</a>
+    <main>
+      <section class="hero container">
+        <div class="hero-copy">
+          <h1>Soluciones profesionales para tu negocio</h1>
+          <p class="lead">Marketing digital, diseño web, consultoría y soporte — paquetes a la medida para que tu proyecto crezca.</p>
+          <div class="hero-ctas">
+            <a href="services.html" class="btn">Ver servicios</a>
+            <a href="#contact" class="btn ghost">Contactar</a>
+          </div>
         </div>
-      </div>
-      <div style="flex:1">
-        <div class="art" style="width:320px;height:220px;border-radius:12px;background:linear-gradient(135deg,#1DB954,#0a7f4f)"></div>
-      </div>
-    </section>
-
-    <section class="categories">
-      <div class="cat">Papelería</div>
-      <div class="cat">Mochilas</div>
-      <div class="cat">Material de oficina</div>
-      <div class="cat">Accesorios</div>
-    </section>
-
-    <section class="featured">
-      <h2>Productos destacados</h2>
-      <div class="grid">
-        <div class="product-card">
-          <div class="art"></div>
-          <div style="margin-top:8px"><strong>Cuaderno A5 - 100 hojas</strong><div class="muted">Cuaderno rayado para toma de notas</div><div class="price">$3.99</div></div>
+        <div class="hero-art">
+          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Servicios" />
         </div>
-        <div class="product-card">
-          <div class="art"></div>
-          <div style="margin-top:8px"><strong>Bolígrafo Gel Pack x5</strong><div class="muted">Suave y resistente</div><div class="price">$4.50</div></div>
-        </div>
-        <div class="product-card">
-          <div class="art"></div>
-          <div style="margin-top:8px"><strong>Mochila Escolar</strong><div class="muted">Compartimentos múltiples</div><div class="price">$29.99</div></div>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <div class="footer">OfficeShop — suministros escolares y de oficina • Demo</div>
-  </div>
+      <section class="features container">
+        <div class="feature">
+          <h3>Diseño Web</h3>
+          <p>Desarrollo de sitios modernos, rápidos y responsivos.</p>
+        </div>
+        <div class="feature">
+          <h3>Marketing Digital</h3>
+          <p>Estrategias de adquisición y crecimiento enfocadas en resultados.</p>
+        </div>
+        <div class="feature">
+          <h3>Consultoría</h3>
+          <p>Asesoría para optimizar procesos y aumentar eficiencia.</p>
+        </div>
+      </section>
 
-  <script>
-    // Keep minimal JS: redirect CTA handled by links. If you want dynamic featured loading, puedo integrarlo.
-  </script>
-</body>
-</html>
+      <section id="contact" class="contact container">
+        <h2>Contáctanos</h2>
+        <p>Mándanos un mensaje y te responderemos en un día hábil.</p>
+        <form id="contactForm" class="contact-form">
+          <input id="name" placeholder="Tu nombre" required />
+          <input id="email" type="email" placeholder="Tu correo" required />
+          <textarea id="message" placeholder="¿En qué podemos ayudarte?" rows="4" required></textarea>
+          <div class="form-actions">
+            <button type="submit" class="btn">Enviar mensaje</button>
+          </div>
+          <div id="contactMsg" class="muted small" style="margin-top:8px"></div>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">© <span id="year"></span> AgenciaServicios — Hecho con ❤️</div>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+      // contact form submit -> save to localStorage (demo)
+      document.getElementById('contactForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+        const submissions = JSON.parse(localStorage.getItem('contacts') || '[]');
+        submissions.push({ name, email, message, created_at: new Date().toISOString() });
+        localStorage.setItem('contacts', JSON.stringify(submissions));
+        document.getElementById('contactMsg').textContent = 'Mensaje enviado. Gracias — te contactaremos pronto.';
+        e.target.reset();
+      });
+    </script>
+  </body>
+  </html>

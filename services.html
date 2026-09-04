@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Servicios — AgenciaServicios</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <div class="brand">AgenciaServicios</div>
+        <nav class="nav">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="services.html" class="nav-link">Servicios</a>
+          <a href="login.html" class="nav-link">Acceso</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="services-hero">
+        <h1>Nuestros servicios</h1>
+        <p class="lead">Paquetes pensados para startups y empresas en crecimiento.</p>
+      </section>
+
+      <section class="services-grid">
+        <article class="service-card">
+          <h3>Diseño y Desarrollo Web</h3>
+          <p>Construimos sitios a medida, optimizados para conversiones y velocidad.</p>
+          <div class="card-actions"><button class="btn" data-service="Diseño Web">Solicitar</button></div>
+        </article>
+
+        <article class="service-card">
+          <h3>Marketing Digital</h3>
+          <p>Campañas en redes, Google Ads y estrategia de contenidos.</p>
+          <div class="card-actions"><button class="btn" data-service="Marketing">Solicitar</button></div>
+        </article>
+
+        <article class="service-card">
+          <h3>Consultoría de Negocio</h3>
+          <p>Diagnóstico operativo y roadmap de mejora.</p>
+          <div class="card-actions"><button class="btn" data-service="Consultoría">Solicitar</button></div>
+        </article>
+      </section>
+
+      <div id="bookingMsg" class="muted" style="margin-top:12px"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">¿Listo para comenzar? Contáctanos.</div>
+    </footer>
+
+    <script>
+      document.querySelectorAll('.service-card .btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const service = btn.getAttribute('data-service');
+          const name = prompt('Tu nombre:');
+          if (!name) return alert('Nombre requerido');
+          const email = prompt('Tu correo:');
+          if (!email) return alert('Correo requerido');
+          const requests = JSON.parse(localStorage.getItem('service_requests') || '[]');
+          requests.push({ service, name, email, created_at: new Date().toISOString() });
+          localStorage.setItem('service_requests', JSON.stringify(requests));
+          document.getElementById('bookingMsg').textContent = `Solicitud para "${service}" enviada. Te contactaremos pronto.`;
+        });
+      });
+    </script>
+  </body>
+  </html>
